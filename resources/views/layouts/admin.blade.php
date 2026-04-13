@@ -114,123 +114,77 @@
 
                         <ul class="navbar-nav flex-column w-100">
 
-                            <!-- ================= ADMIN ================= -->
-                            @if($user->role == 'admin')
-
+                            <!-- NAVIGASI -->
                             <li class="nav-divider text-white px-3 mt-3">
                                 Navigasi Utama
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
-                                    href="{{ route('admin.dashboard') }}">
-                                    <i class="fa fa-home"></i> Dashboard
+                                <a class="nav-link" href="#">
+                                    <i class="fa fa-home"></i> Dashboard Admin
                                 </a>
                             </li>
 
+                            <!-- MANAJEMEN -->
                             <li class="nav-divider text-white px-3 mt-3">
                                 Manajemen
                             </li>
 
+                            <!-- DATA USERS -->
                             <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs('admin.users*') ? 'active' : '' }}"
-                                    href="{{ route('admin.users') }}">
+                                <a class="nav-link" href="#" data-toggle="collapse" data-target="#usersMenu">
                                     <i class="fa fa-users"></i> Data Users
                                 </a>
+                                <div id="usersMenu" class="collapse">
+                                    <ul class="nav flex-column ml-3">
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{{ route('admin.users.guru') }}">Guru</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{{ route('admin.users.siswa') }}">Siswa</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{{ route('admin.users.petugas') }}">Petugas</a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </li>
 
+                            <!-- MASTER DATA -->
                             <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs('admin.kategori*') ? 'active' : '' }}"
-                                    href="{{ route('admin.kategori') }}">
-                                    <i class="fa fa-tags"></i> Kategori
+                                <a class="nav-link" href="#" data-toggle="collapse" data-target="#masterMenu">
+                                    <i class="fa fa-database"></i> Master Data
+                                </a>
+                                <div id="masterMenu" class="collapse">
+                                    <ul class="nav flex-column ml-3">
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#">Kategori Barang</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#">Kelas</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#">Jurusan</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#">Ruangan</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <!-- ASPIRASI -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="fa fa-exclamation-circle"></i> Data Aspirasi
                                 </a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs('admin.pengaduan*') ? 'active' : '' }}"
-                                    href="{{ route('admin.pengaduan') }}">
-                                    <i class="fa fa-exclamation-circle"></i> Pengaduan
+                                <a class="nav-link" href="#">
+                                    <i class="fa fa-exclamation-circle"></i> History
                                 </a>
                             </li>
-
-                            @endif
-
-
-                            <!-- ================= GURU ================= -->
-                            @if($user->role == 'guru')
-
-                            <li class="nav-divider text-white px-3 mt-3">
-                                Navigasi Utama
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs('guru.dashboard') ? 'active' : '' }}"
-                                    href="{{ route('guru.dashboard') }}">
-                                    <i class="fa fa-home"></i> Dashboard
-                                </a>
-                            </li>
-
-                            <li class="nav-divider text-white px-3 mt-3">
-                                Aspirasi
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs('guru.aspirasi.index') ? 'active' : '' }}"
-                                    href="{{ route('guru.aspirasi.index') }}">
-                                    <i class="fa fa-comments"></i> Data Aspirasi
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs('guru.history') ? 'active' : '' }}"
-                                    href="{{ route('guru.history') }}">
-                                    <i class="fa fa-history"></i> History
-                                </a>
-                            </li>
-
-                            @endif
-
-
-                            <!-- ================= SISWA ================= -->
-                            @if($user->role == 'siswa')
-
-                            <li class="nav-divider text-white px-3 mt-3">
-                                Navigasi Utama
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs('siswa.dashboard') ? 'active' : '' }}"
-                                    href="{{ route('siswa.dashboard') }}">
-                                    <i class="fa fa-home"></i> Dashboard
-                                </a>
-                            </li>
-
-                            <li class="nav-divider text-white px-3 mt-3">
-                                Aspirasi
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs('siswa.aspirasi.create') ? 'active' : '' }}"
-                                    href="{{ route('siswa.aspirasi.create') }}">
-                                    <i class="fa fa-edit"></i> Buat Aspirasi
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs('siswa.aspirasi.status') ? 'active' : '' }}"
-                                    href="{{ route('siswa.aspirasi.status') }}">
-                                    <i class="fa fa-chart-line"></i> Status
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs('siswa.aspirasi.history') ? 'active' : '' }}"
-                                    href="{{ route('siswa.aspirasi.history') }}">
-                                    <i class="fa fa-history"></i> History
-                                </a>
-                            </li>
-
-                            @endif
 
                         </ul>
 

@@ -6,6 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+// IMPORT MODEL RELASI
+use App\Models\Siswa;
+use App\Models\Guru;
+use App\Models\Petugas;
+use App\Models\Aspirasi;
+use App\Models\Progres;
+use App\Models\HistoryStatus;
+
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
@@ -23,6 +31,8 @@ class User extends Authenticatable
         'password',
     ];
 
+    // ================= RELASI =================
+
     // Relasi dengan siswa
     public function siswa()
     {
@@ -33,6 +43,13 @@ class User extends Authenticatable
     public function guru()
     {
         return $this->hasOne(Guru::class, 'user_id');
+    }
+
+    // 🔥 INI YANG KURANG TADI
+    // Relasi dengan petugas
+    public function petugas()
+    {
+        return $this->hasOne(Petugas::class, 'user_id');
     }
 
     // Relasi dengan aspirasi

@@ -11,7 +11,7 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{ route('siswa.dashboard') }}" class="breadcrumb-link">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('siswa.aspirasi.index') }}" class="breadcrumb-link">Aspirasi</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('siswa.aspirasi.history') }}" class="breadcrumb-link">Aspirasi</a></li>
                         <li class="breadcrumb-item active">Detail</li>
                     </ol>
                 </nav>
@@ -37,7 +37,7 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <small class="text-muted">Kategori</small>
-                        <p class="font-weight-bold mb-0">{{ $aspirasi->kategori->nama ?? '-' }}</p>
+                        <p class="font-weight-bold mb-0">{{ $aspirasi->kategori->nama_kategori ?? '-' }}</p>
                     </div>
                     <div class="col-md-6">
                         <small class="text-muted">Tanggal Dikirim</small>
@@ -70,7 +70,7 @@
                 @endif
 
                 <div class="mt-4">
-                    <a href="{{ route('siswa.aspirasi.index') }}" class="btn btn-secondary">
+                    <a href="{{ route('siswa.aspirasi.history') }}" class="btn btn-secondary">
                         <i class="fa fa-arrow-left mr-2"></i>Kembali
                     </a>
                 </div>
