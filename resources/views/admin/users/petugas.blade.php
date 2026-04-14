@@ -3,51 +3,105 @@
 @section('title', 'Data Petugas')
 
 @section('content')
+
+<style>
+    .petugas-header {
+        background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
+        border-radius: 12px;
+        padding: 20px;
+        color: white;
+        margin-bottom: 20px;
+    }
+
+    .petugas-header h5 {
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .petugas-header small {
+        opacity: 0.8;
+    }
+
+    .btn-add {
+        background: white;
+        color: #1e3a5f;
+        border-radius: 8px;
+        font-weight: 500;
+        padding: 6px 14px;
+        border: none;
+    }
+
+    .table-custom {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .table-custom thead {
+        background: #f1f5f9;
+    }
+
+    .table-custom th {
+        font-size: 13px;
+        color: #64748b;
+        text-transform: uppercase;
+        border: none;
+    }
+
+    .table-custom td {
+        border: none;
+        vertical-align: middle;
+    }
+
+    .badge-status {
+        padding: 5px 10px;
+        border-radius: 8px;
+        font-size: 12px;
+    }
+
+    .btn-action {
+        padding: 4px 10px;
+        font-size: 12px;
+        border-radius: 6px;
+    }
+</style>
+
 <div class="row">
     <div class="col-12">
-        <div class="card shadow-sm">
 
-            {{-- HEADER --}}
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Data Petugas</h5>
-                <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#createPetugasModal">
-                    + Tambah Petugas
-                </button>
+        {{-- HEADER --}}
+        <div class="petugas-header d-flex justify-content-between align-items-center">
+            <div>
+                <h5>Manajemen Petugas</h5>
+                <small>Kelola data petugas yang tersedia</small>
             </div>
+            <button class="btn btn-add" data-toggle="modal" data-target="#createPetugasModal">
+                + Tambah Petugas
+            </button>
+        </div>
 
-            {{-- BODY --}}
-            <div class="card-body">
+        {{-- TABLE --}}
+        <div class="card shadow-sm border-0 table-custom">
+            <div class="card-body p-0">
 
                 @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show">
+                <div class="alert alert-success m-3">
                     {{ session('success') }}
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                </div>
-                @endif
-
-                @if($errors->any())
-                <div class="alert alert-danger alert-dismissible fade show">
-                    <ul class="mb-0">
-                        @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
                 </div>
                 @endif
 
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-light">
+                    <table class="table align-middle mb-0">
+                        <thead>
                             <tr>
                                 <th width="5%">No</th>
                                 <th>Foto</th>
                                 <th>NIP</th>
                                 <th>Nama</th>
-                                <th>Jenis Kelamin</th>
+                                <th>Gender</th>
                                 <th>Email</th>
                                 <th>Status</th>
-                                <th width="15%">Aksi</th>
+                                <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -56,30 +110,30 @@
                                 <td>{{ $index + 1 }}</td>
                                 <td>
                                     <img src="{{ $p->petugas?->foto ? asset($p->petugas?->foto) : asset('assets/images/avatar-1.jpg') }}"
-                                        width="45" height="45"
-                                        style="border-radius:50%; object-fit:cover; border:2px solid #ddd;">
+                                        width="40" height="40"
+                                        style="border-radius:50%; object-fit:cover;">
                                 </td>
                                 <td>{{ $p->petugas->nip ?? '-' }}</td>
-                                <td>{{ $p->petugas?->nama ?? '-' }}</td>
+                                <td class="fw-semibold">{{ $p->petugas?->nama ?? '-' }}</td>
                                 <td>{{ ($p->petugas->jenis_kelamin ?? '') == 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
                                 <td>{{ $p->email }}</td>
                                 <td>
-                                    <span class="badge {{ ($p->petugas->status ?? 'aktif') == 'aktif' ? 'bg-success' : 'bg-secondary' }}">
+                                    <span class="badge badge-status {{ ($p->petugas->status ?? 'aktif') == 'aktif' ? 'bg-success' : 'bg-secondary' }}">
                                         {{ ucfirst($p->petugas->status ?? 'Aktif') }}
                                     </span>
                                 </td>
-                                <td>
-                                    <button type="button" class="btn btn-info btn-sm"
+                                <td class="text-center">
+                                    <button class="btn btn-info btn-action"
                                         data-toggle="modal"
                                         data-target="#viewPetugasModal{{ $p->petugas?->id ?? $p->id }}">
                                         View
                                     </button>
-                                    <button type="button" class="btn btn-warning btn-sm"
+                                    <button class="btn btn-warning btn-action"
                                         data-toggle="modal"
                                         data-target="#editPetugasModal{{ $p->petugas?->id ?? $p->id }}">
                                         Edit
                                     </button>
-                                    <button type="button" class="btn btn-danger btn-sm"
+                                    <button class="btn btn-danger btn-action"
                                         data-toggle="modal"
                                         data-target="#deletePetugasModal{{ $p->petugas?->id ?? $p->id }}">
                                         Hapus
@@ -276,7 +330,9 @@
 
                             @empty
                             <tr>
-                                <td colspan="8" class="text-center text-muted py-4">Belum ada data petugas</td>
+                                <td colspan="8" class="text-center py-4 text-muted">
+                                    Belum ada data petugas
+                                </td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -286,7 +342,6 @@
         </div>
     </div>
 </div>
-
 {{-- ===== MODAL CREATE ===== --}}
 <div class="modal fade" id="createPetugasModal" tabindex="-1">
     <div class="modal-dialog modal-lg">

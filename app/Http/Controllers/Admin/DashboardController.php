@@ -9,8 +9,11 @@ use App\Models\Guru;
 use App\Models\Petugas;
 use App\Models\Aspirasi;
 use App\Models\Kategori;
+use App\Models\Kelas;
+use App\Models\Jurusan;
 use App\Models\Progres;
 use App\Models\HistoryStatus;
+use App\Models\Ruangan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -31,7 +34,7 @@ class DashboardController extends Controller
         ]);
     }
 
-    // ================= USERS =================
+    // ================= USERS VIEW =================
     public function users()
     {
         return view('admin.users.index', [
@@ -41,303 +44,79 @@ class DashboardController extends Controller
             'petugas' => User::where('role', 'petugas')->with('petugas')->get(),
         ]);
     }
-    // ================= SISWA =================
 
+    // ================= SISWA =================
     public function siswa()
     {
         $siswas = User::where('role', 'siswa')->with('siswa')->get();
         return view('admin.users.siswa', compact('siswas'));
     }
 
-    public function storeSiswa(Request $request)
-    {
-        $request->validate([
-            'nis'           => 'required|unique:siswa,nis',
-            'nama'          => 'required',
-            'kelas'         => 'required',
-            'jurusan'       => 'required',
-            'jenis_kelamin' => 'required',
-            'tanggal_lahir' => 'required|date',
-            'alamat'        => 'required',
-            'no_hp'         => 'required',
-            'email'         => 'required|email|unique:users,email',
-            'password'      => 'required|min:6',
-            'foto'          => 'nullable|image|max:2048',
-        ]);
+    public function storeSiswa(Request $request) { /* tetap punyamu */ }
+    public function updateSiswa(Request $request, $id) { /* tetap punyamu */ }
+    public function destroySiswa($id) { /* tetap punyamu */ }
 
-        $fotoPath = null;
-        if ($request->hasFile('foto')) {
-            $file     = $request->file('foto');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('assets/images/siswa'), $filename);
-            $fotoPath = 'assets/images/siswa/' . $filename;
-        }
-
-        $user = User::create([
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-            'role'     => 'siswa',
-        ]);
-
-        Siswa::create([
-            'user_id'       => $user->id,
-            'nis'           => $request->nis,
-            'nama'          => $request->nama,
-            'kelas'         => $request->kelas,
-            'jurusan'       => $request->jurusan,
-            'jenis_kelamin' => $request->jenis_kelamin,
-            'tanggal_lahir' => $request->tanggal_lahir,
-            'alamat'        => $request->alamat,
-            'no_hp'         => $request->no_hp,
-            'foto'          => $fotoPath,
-        ]);
-
-        return back()->with('success', 'Siswa berhasil ditambahkan');
-    }
-
-    public function updateSiswa(Request $request, $id)
-    {
-        $siswa = Siswa::findOrFail($id);
-
-        $request->validate([
-            'nis'   => 'required|unique:siswa,nis,' . $id,
-            'email' => 'required|email|unique:users,email,' . $siswa->user_id,
-            'foto'  => 'nullable|image|max:2048',
-        ]);
-
-        $data = $request->except(['email', 'password', 'foto']);
-
-        if ($request->hasFile('foto')) {
-            // Hapus foto lama kalau ada
-            if ($siswa->foto && file_exists(public_path($siswa->foto))) {
-                unlink(public_path($siswa->foto));
-            }
-            $file     = $request->file('foto');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('assets/images/siswa'), $filename);
-            $data['foto'] = 'assets/images/siswa/' . $filename;
-        }
-
-        $siswa->update($data);
-        $siswa->user->update(['email' => $request->email]);
-
-        if ($request->password) {
-            $siswa->user->update(['password' => Hash::make($request->password)]);
-        }
-
-        return back()->with('success', 'Siswa berhasil diupdate');
-    }
-
-    public function destroySiswa($id)
-    {
-        $siswa = Siswa::findOrFail($id);
-
-        if ($siswa->foto && file_exists(public_path($siswa->foto))) {
-            unlink(public_path($siswa->foto));
-        }
-
-        $siswa->user->delete();
-        $siswa->delete();
-
-        return back()->with('success', 'Siswa berhasil dihapus');
-    }
-
-    // ================= GURU =================
-    // Taruh di dalam class DashboardController
-
+    // ================= GURU (FIX ERROR KAMU ADA DI SINI) =================
     public function guru()
     {
         $gurus = User::where('role', 'guru')->with('guru')->get();
         return view('admin.users.guru', compact('gurus'));
     }
 
-    public function storeGuru(Request $request)
-    {
-        $request->validate([
-            'nip'            => 'required|unique:guru,nip',
-            'nama'           => 'required',
-            'mata_pelajaran' => 'required',
-            'jenis_kelamin'  => 'required',
-            'tanggal_lahir'  => 'required|date',
-            'alamat'         => 'required',
-            'no_hp'          => 'required',
-            'email'          => 'required|email|unique:users,email',
-            'password'       => 'required|min:6',
-            'foto'           => 'nullable|image|max:2048',
-        ]);
-
-        $fotoPath = null;
-        if ($request->hasFile('foto')) {
-            $file     = $request->file('foto');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('assets/images/guru'), $filename);
-            $fotoPath = 'assets/images/guru/' . $filename;
-        }
-
-        $user = User::create([
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-            'role'     => 'guru',
-        ]);
-
-        Guru::create([
-            'user_id'        => $user->id,
-            'nip'            => $request->nip,
-            'nama'           => $request->nama,
-            'mata_pelajaran' => $request->mata_pelajaran,
-            'jenis_kelamin'  => $request->jenis_kelamin,
-            'tanggal_lahir'  => $request->tanggal_lahir,
-            'alamat'         => $request->alamat,
-            'no_hp'          => $request->no_hp,
-            'foto'           => $fotoPath,
-        ]);
-
-        return back()->with('success', 'Guru berhasil ditambahkan');
-    }
-
-    public function updateGuru(Request $request, $id)
-    {
-        $guru = Guru::findOrFail($id);
-
-        $request->validate([
-            'nip'   => 'required|unique:guru,nip,' . $id,
-            'email' => 'required|email|unique:users,email,' . $guru->user_id,
-            'foto'  => 'nullable|image|max:2048',
-        ]);
-
-        $data = $request->except(['email', 'password', 'foto']);
-
-        if ($request->hasFile('foto')) {
-            if ($guru->foto && file_exists(public_path($guru->foto))) {
-                unlink(public_path($guru->foto));
-            }
-            $file     = $request->file('foto');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('assets/images/guru'), $filename);
-            $data['foto'] = 'assets/images/guru/' . $filename;
-        }
-
-        $guru->update($data);
-        $guru->user->update(['email' => $request->email]);
-
-        if ($request->password) {
-            $guru->user->update(['password' => Hash::make($request->password)]);
-        }
-
-        return back()->with('success', 'Guru berhasil diupdate');
-    }
-
-    public function destroyGuru($id)
-    {
-        $guru = Guru::findOrFail($id);
-
-        if ($guru->foto && file_exists(public_path($guru->foto))) {
-            unlink(public_path($guru->foto));
-        }
-
-        $guru->user->delete();
-        $guru->delete();
-
-        return back()->with('success', 'Guru berhasil dihapus');
-    }
+    public function storeGuru(Request $request) { /* tetap punyamu */ }
+    public function updateGuru(Request $request, $id) { /* tetap punyamu */ }
+    public function destroyGuru($id) { /* tetap punyamu */ }
 
     // ================= PETUGAS =================
-
     public function petugas()
     {
         $petugas = User::where('role', 'petugas')
             ->with('petugas')
-            ->whereHas('petugas') 
+            ->whereHas('petugas')
             ->get();
 
         return view('admin.users.petugas', compact('petugas'));
     }
 
-    public function storePetugas(Request $request)
+    public function storePetugas(Request $request) { /* tetap punyamu */ }
+    public function updatePetugas(Request $request, $id) { /* tetap punyamu */ }
+    public function destroyPetugas($id) { /* tetap punyamu */ }
+
+    // ================= KELAS =================
+    public function kelas()
     {
-        $request->validate([
-            'nip'           => 'required|unique:petugas,nip',
-            'nama'          => 'required',
-            'jenis_kelamin' => 'required',
-            'email'         => 'required|email|unique:users,email',
-            'password'      => 'required|min:6',
-            'foto'          => 'nullable|image|max:2048',
-        ]);
+        $kelas = Kelas::with('jurusan')->withCount('siswa')->get();
+        $jurusan = Jurusan::all();
 
-        $fotoPath = null;
-        if ($request->hasFile('foto')) {
-            $file     = $request->file('foto');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('assets/images/petugas'), $filename);
-            $fotoPath = 'assets/images/petugas/' . $filename;
-        }
-
-        $user = User::create([
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-            'role'     => 'petugas',
-        ]);
-
-        Petugas::create([
-            'user_id'       => $user->id,
-            'nip'           => $request->nip,
-            'nama'          => $request->nama,
-            'jenis_kelamin' => $request->jenis_kelamin,
-            'tanggal_lahir' => $request->tanggal_lahir,
-            'no_hp'         => $request->no_hp,
-            'alamat'        => $request->alamat,
-            'status'        => $request->status ?? 'aktif',
-            'foto'          => $fotoPath,
-        ]);
-
-        return back()->with('success', 'Petugas berhasil ditambahkan');
+        return view('admin.kelas.index', compact('kelas', 'jurusan'));
     }
 
-    public function updatePetugas(Request $request, $id)
-    {
-        $petugas = Petugas::findOrFail($id);
+    public function storeKelas(Request $request) { /* tetap punyamu */ }
+    public function updateKelas(Request $request, $id) { /* tetap punyamu */ }
+    public function destroyKelas($id) { /* tetap punyamu */ }
 
-        $request->validate([
-            'nip'   => 'required|unique:petugas,nip,' . $id,
-            'email' => 'required|email|unique:users,email,' . $petugas->user_id,
-            'foto'  => 'nullable|image|max:2048',
+    // ================= JURUSAN =================
+    public function jurusan()
+    {
+        $jurusan = Jurusan::withCount('kelas')->get();
+        return view('admin.jurusan.index', compact('jurusan'));
+    }
+
+    public function storeJurusan(Request $request) { /* tetap punyamu */ }
+    public function updateJurusan(Request $request, $id) { /* tetap punyamu */ }
+    public function destroyJurusan($id) { /* tetap punyamu */ }
+
+    // ================= RUANGAN =================
+    public function ruangan()
+    {
+        return view('admin.ruangan.index', [
+            'ruangans' => Ruangan::latest()->get()
         ]);
-
-        $data = $request->except(['email', 'password', 'foto']);
-
-        if ($request->hasFile('foto')) {
-            if ($petugas->foto && file_exists(public_path($petugas->foto))) {
-                unlink(public_path($petugas->foto));
-            }
-            $file     = $request->file('foto');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('assets/images/petugas'), $filename);
-            $data['foto'] = 'assets/images/petugas/' . $filename;
-        }
-
-        $petugas->update($data);
-        $petugas->user->update(['email' => $request->email]);
-
-        if ($request->password) {
-            $petugas->user->update(['password' => Hash::make($request->password)]);
-        }
-
-        return back()->with('success', 'Petugas berhasil diupdate');
     }
 
-    public function destroyPetugas($id)
-    {
-        $petugas = Petugas::findOrFail($id);
-
-        if ($petugas->foto && file_exists(public_path($petugas->foto))) {
-            unlink(public_path($petugas->foto));
-        }
-
-        $petugas->user->delete();
-        $petugas->delete();
-
-        return back()->with('success', 'Petugas berhasil dihapus');
-    }
+    public function storeRuangan(Request $request) { /* tetap punyamu */ }
+    public function updateRuangan(Request $request, $id) { /* tetap punyamu */ }
+    public function destroyRuangan($id) { /* tetap punyamu */ }
 
     // ================= KATEGORI =================
     public function kategori()
@@ -347,37 +126,11 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function storeKategori(Request $request)
-    {
-        $request->validate([
-            'nama_kategori' => 'required|unique:kategori,nama_kategori',
-        ]);
+    public function storeKategori(Request $request) { /* tetap punyamu */ }
+    public function updateKategori(Request $request, $id) { /* tetap punyamu */ }
+    public function destroyKategori($id) { /* tetap punyamu */ }
 
-        Kategori::create($request->all());
-
-        return back()->with('success', 'Kategori ditambahkan');
-    }
-
-    public function updateKategori(Request $request, $id)
-    {
-        $kategori = Kategori::findOrFail($id);
-
-        $request->validate([
-            'nama_kategori' => 'required|unique:kategori,nama_kategori,' . $id . ',id_kategori',
-        ]);
-
-        $kategori->update($request->all());
-
-        return back()->with('success', 'Kategori diupdate');
-    }
-
-    public function destroyKategori($id)
-    {
-        Kategori::findOrFail($id)->delete();
-        return back()->with('success', 'Kategori dihapus');
-    }
-
-    // ================= ASPIRASI =================
+    // ================= PENGADUAN =================
     public function pengaduan()
     {
         return view('admin.pengaduan.index', [
@@ -386,35 +139,6 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function updateStatus(Request $request, $id)
-    {
-        $aspirasi = Aspirasi::findOrFail($id);
-
-        HistoryStatus::create([
-            'id_aspirasi' => $id,
-            'status_lama' => $aspirasi->status,
-            'status_baru' => $request->status,
-            'diubah_oleh' => auth()->id(),
-        ]);
-
-        $aspirasi->update(['status' => $request->status]);
-
-        return back()->with('success', 'Status diupdate');
-    }
-
-    public function destroyAspirasi($id)
-    {
-        $aspirasi = Aspirasi::findOrFail($id);
-
-        if ($aspirasi->foto && Storage::exists('public/' . $aspirasi->foto)) {
-            Storage::delete('public/' . $aspirasi->foto);
-        }
-
-        Progres::where('id_aspirasi', $id)->delete();
-        HistoryStatus::where('id_aspirasi', $id)->delete();
-
-        $aspirasi->delete();
-
-        return back()->with('success', 'Aspirasi dihapus');
-    }
+    public function updateStatus(Request $request, $id) { /* tetap punyamu */ }
+    public function destroyAspirasi($id) { /* tetap punyamu */ }
 }

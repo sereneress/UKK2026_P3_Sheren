@@ -158,16 +158,16 @@
                                 <div id="masterMenu" class="collapse">
                                     <ul class="nav flex-column ml-3">
                                         <li class="nav-item">
-                                            <a class="nav-link" href="#">Kategori Barang</a>
+                                            <a class="nav-link" href="{{ route('admin.kategori.index') }}">Kategori</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="#">Kelas</a>
+                                            <a class="nav-link" href="{{ route('admin.kelas.index') }}">Kelas</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="#">Jurusan</a>
+                                            <a class="nav-link" href="{{ route('admin.jurusan.index') }}">Jurusan</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="#">Ruangan</a>
+                                            <a class="nav-link" href="{{ route('admin.ruangan.index') }}">Ruangan</a>
                                         </li>
                                     </ul>
                                 </div>
