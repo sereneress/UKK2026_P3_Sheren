@@ -16,19 +16,22 @@ use App\Http\Controllers\Siswa\DashboardController as SiswaDashboardController;
 use App\Http\Controllers\Petugas\AspirasiController as PetugasAspirasiController;
 use App\Http\Controllers\Petugas\DashboardController as PetugasDashboardController;
 
+
 /*
 |--------------------------------------------------------------------------
 | AUTH
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
-Route::get('/login', [LoginController::class, 'showLoginForm']);
-Route::post('/login', [LoginController::class, 'login']);
+// ❗ FIX UTAMA DI SINI
+Route::get('/', [LoginController::class, 'showLoginForm']); // tanpa name
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login'); // login name di sini
+Route::post('/login', [LoginController::class, 'login'])->name('login.process');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('/register', [LoginController::class, 'showRegisterForm'])->name('register.form');
 Route::post('/register', [LoginController::class, 'register'])->name('register');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -48,6 +51,7 @@ Route::get('/dashboard', function () {
     return redirect()->route('login');
 })->name('dashboard');
 
+
 /*
 |--------------------------------------------------------------------------
 | ADMIN
@@ -58,58 +62,76 @@ Route::middleware(['auth', 'role:admin'])
     ->name('admin.')
     ->group(function () {
 
-        // Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         // USERS
-        Route::get('/users/siswa', [DashboardController::class, 'siswa'])->name('users.siswa');
-        Route::get('/users/guru', [DashboardController::class, 'guru'])->name('users.guru');
-        Route::get('/users/petugas', [DashboardController::class, 'petugas'])->name('users.petugas');
+        Route::prefix('users')->group(function () {
+            Route::get('/siswa', [DashboardController::class, 'siswa'])->name('users.siswa');
+            Route::get('/guru', [DashboardController::class, 'guru'])->name('users.guru');
+            Route::get('/petugas', [DashboardController::class, 'petugas'])->name('users.petugas');
+        });
 
         // SISWA
-        Route::post('/siswa/store', [DashboardController::class, 'storeSiswa'])->name('siswa.store');
-        Route::put('/siswa/{id}', [DashboardController::class, 'updateSiswa'])->name('siswa.update');
-        Route::delete('/siswa/{id}', [DashboardController::class, 'destroySiswa'])->name('siswa.destroy');
+        Route::prefix('siswa')->name('siswa.')->group(function () {
+            Route::post('/store', [DashboardController::class, 'storeSiswa'])->name('store');
+            Route::put('/{id}', [DashboardController::class, 'updateSiswa'])->name('update');
+            Route::delete('/{id}', [DashboardController::class, 'destroySiswa'])->name('destroy');
+        });
 
         // GURU
-        Route::post('/guru/store', [DashboardController::class, 'storeGuru'])->name('guru.store');
-        Route::put('/guru/{id}', [DashboardController::class, 'updateGuru'])->name('guru.update');
-        Route::delete('/guru/{id}', [DashboardController::class, 'destroyGuru'])->name('guru.destroy');
+        Route::prefix('guru')->name('guru.')->group(function () {
+            Route::post('/store', [DashboardController::class, 'storeGuru'])->name('store');
+            Route::put('/{id}', [DashboardController::class, 'updateGuru'])->name('update');
+            Route::delete('/{id}', [DashboardController::class, 'destroyGuru'])->name('destroy');
+        });
 
         // PETUGAS
-        Route::post('/petugas/store', [DashboardController::class, 'storePetugas'])->name('petugas.store');
-        Route::put('/petugas/{id}', [DashboardController::class, 'updatePetugas'])->name('petugas.update');
-        Route::delete('/petugas/{id}', [DashboardController::class, 'destroyPetugas'])->name('petugas.destroy');
+        Route::prefix('petugas')->name('petugas.')->group(function () {
+            Route::post('/store', [DashboardController::class, 'storePetugas'])->name('store');
+            Route::put('/{id}', [DashboardController::class, 'updatePetugas'])->name('update');
+            Route::delete('/{id}', [DashboardController::class, 'destroyPetugas'])->name('destroy');
+        });
 
         // KATEGORI
-        Route::get('/kategori', [DashboardController::class, 'kategori'])->name('kategori.index');
-        Route::post('/kategori', [DashboardController::class, 'storeKategori'])->name('kategori.store');
-        Route::put('/kategori/{id}', [DashboardController::class, 'updateKategori'])->name('kategori.update');
-        Route::delete('/kategori/{id}', [DashboardController::class, 'destroyKategori'])->name('kategori.destroy');
+        Route::prefix('kategori')->name('kategori.')->group(function () {
+            Route::get('/', [DashboardController::class, 'kategori'])->name('index');
+            Route::post('/', [DashboardController::class, 'storeKategori'])->name('store');
+            Route::put('/{id}', [DashboardController::class, 'updateKategori'])->name('update');
+            Route::delete('/{id}', [DashboardController::class, 'destroyKategori'])->name('destroy');
+        });
 
         // KELAS
-        Route::get('/kelas', [DashboardController::class, 'kelas'])->name('kelas.index');
-        Route::post('/kelas', [DashboardController::class, 'storeKelas'])->name('kelas.store');
-        Route::put('/kelas/{id}', [DashboardController::class, 'updateKelas'])->name('kelas.update');
-        Route::delete('/kelas/{id}', [DashboardController::class, 'destroyKelas'])->name('kelas.destroy');
+        Route::prefix('kelas')->name('kelas.')->group(function () {
+            Route::get('/', [DashboardController::class, 'kelas'])->name('index');
+            Route::post('/', [DashboardController::class, 'storeKelas'])->name('store');
+            Route::put('/{id}', [DashboardController::class, 'updateKelas'])->name('update');
+            Route::delete('/{id}', [DashboardController::class, 'destroyKelas'])->name('destroy');
+        });
 
         // JURUSAN
-        Route::get('/jurusan', [DashboardController::class, 'jurusan'])->name('jurusan.index');
-        Route::post('/jurusan', [DashboardController::class, 'storeJurusan'])->name('jurusan.store');
-        Route::put('/jurusan/{id}', [DashboardController::class, 'updateJurusan'])->name('jurusan.update');
-        Route::delete('/jurusan/{id}', [DashboardController::class, 'destroyJurusan'])->name('jurusan.destroy');
+        Route::prefix('jurusan')->name('jurusan.')->group(function () {
+            Route::get('/', [DashboardController::class, 'jurusan'])->name('index');
+            Route::post('/', [DashboardController::class, 'storeJurusan'])->name('store');
+            Route::put('/{id}', [DashboardController::class, 'updateJurusan'])->name('update');
+            Route::delete('/{id}', [DashboardController::class, 'destroyJurusan'])->name('destroy');
+        });
 
-        // RUANGAN (🔥 TAMBAHAN BARU)
-        Route::get('/ruangan', [DashboardController::class, 'ruangan'])->name('ruangan.index');
-        Route::post('/ruangan', [DashboardController::class, 'storeRuangan'])->name('ruangan.store');
-        Route::put('/ruangan/{id}', [DashboardController::class, 'updateRuangan'])->name('ruangan.update');
-        Route::delete('/ruangan/{id}', [DashboardController::class, 'destroyRuangan'])->name('ruangan.destroy');
+        // RUANGAN
+        Route::prefix('ruangan')->name('ruangan.')->group(function () {
+            Route::get('/', [DashboardController::class, 'ruangan'])->name('index');
+            Route::post('/', [DashboardController::class, 'storeRuangan'])->name('store');
+            Route::put('/{id}', [DashboardController::class, 'updateRuangan'])->name('update');
+            Route::delete('/{id}', [DashboardController::class, 'destroyRuangan'])->name('destroy');
+        });
 
         // PENGADUAN
-        Route::get('/pengaduan', [DashboardController::class, 'pengaduan'])->name('pengaduan.index');
-        Route::put('/pengaduan/{id}/status', [DashboardController::class, 'updateStatus'])->name('pengaduan.status');
-        Route::delete('/pengaduan/{id}', [DashboardController::class, 'destroyAspirasi'])->name('pengaduan.destroy');
+        Route::prefix('pengaduan')->name('pengaduan.')->group(function () {
+            Route::get('/', [DashboardController::class, 'pengaduan'])->name('index');
+            Route::put('/{id}/status', [DashboardController::class, 'updateStatus'])->name('status');
+            Route::delete('/{id}', [DashboardController::class, 'destroyAspirasi'])->name('destroy');
+        });
     });
+
 
 /*
 |--------------------------------------------------------------------------
@@ -123,14 +145,17 @@ Route::middleware(['auth', 'role:guru'])
 
         Route::get('/dashboard', [GuruDashboardController::class, 'index'])->name('dashboard');
 
-        Route::get('/aspirasi', [GuruAspirasiController::class, 'index'])->name('aspirasi.index');
-        Route::get('/aspirasi/{id}', [GuruAspirasiController::class, 'detail'])->name('aspirasi.detail');
-        Route::post('/aspirasi/{id}/feedback', [GuruAspirasiController::class, 'storeFeedback'])->name('aspirasi.feedback');
-        Route::post('/aspirasi/{id}/progres', [GuruAspirasiController::class, 'storeProgres'])->name('aspirasi.progres');
-        Route::delete('/aspirasi/{id}', [GuruAspirasiController::class, 'destroy'])->name('aspirasi.destroy');
+        Route::prefix('aspirasi')->group(function () {
+            Route::get('/', [GuruAspirasiController::class, 'index'])->name('aspirasi.index');
+            Route::get('/{id}', [GuruAspirasiController::class, 'detail'])->name('aspirasi.detail');
+            Route::post('/{id}/feedback', [GuruAspirasiController::class, 'storeFeedback'])->name('aspirasi.feedback');
+            Route::post('/{id}/progres', [GuruAspirasiController::class, 'storeProgres'])->name('aspirasi.progres');
+            Route::delete('/{id}', [GuruAspirasiController::class, 'destroy'])->name('aspirasi.destroy');
+        });
 
         Route::get('/history', [GuruAspirasiController::class, 'history'])->name('history');
     });
+
 
 /*
 |--------------------------------------------------------------------------
@@ -144,14 +169,17 @@ Route::middleware(['auth', 'role:petugas'])
 
         Route::get('/dashboard', [PetugasDashboardController::class, 'index'])->name('dashboard');
 
-        Route::get('/aspirasi', [PetugasAspirasiController::class, 'index'])->name('aspirasi.index');
-        Route::get('/aspirasi/{id}', [PetugasAspirasiController::class, 'detail'])->name('aspirasi.detail');
-        Route::post('/aspirasi/{id}/feedback', [PetugasAspirasiController::class, 'storeFeedback'])->name('aspirasi.feedback');
-        Route::post('/aspirasi/{id}/progres', [PetugasAspirasiController::class, 'storeProgres'])->name('aspirasi.progres');
-        Route::delete('/aspirasi/{id}', [PetugasAspirasiController::class, 'destroy'])->name('aspirasi.destroy');
+        Route::prefix('aspirasi')->group(function () {
+            Route::get('/', [PetugasAspirasiController::class, 'index'])->name('aspirasi.index');
+            Route::get('/{id}', [PetugasAspirasiController::class, 'detail'])->name('aspirasi.detail');
+            Route::post('/{id}/feedback', [PetugasAspirasiController::class, 'storeFeedback'])->name('aspirasi.feedback');
+            Route::post('/{id}/progres', [PetugasAspirasiController::class, 'storeProgres'])->name('aspirasi.progres');
+            Route::delete('/{id}', [PetugasAspirasiController::class, 'destroy'])->name('aspirasi.destroy');
+        });
 
         Route::get('/history', [PetugasAspirasiController::class, 'history'])->name('history');
     });
+
 
 /*
 |--------------------------------------------------------------------------
@@ -165,9 +193,11 @@ Route::middleware(['auth', 'role:siswa'])
 
         Route::get('/dashboard', [SiswaDashboardController::class, 'index'])->name('dashboard');
 
-        Route::get('/aspirasi/create', [SiswaAspirasiController::class, 'create'])->name('aspirasi.create');
-        Route::post('/aspirasi', [SiswaAspirasiController::class, 'store'])->name('aspirasi.store');
-        Route::get('/aspirasi/status', [SiswaAspirasiController::class, 'status'])->name('aspirasi.status');
-        Route::get('/aspirasi/history', [SiswaAspirasiController::class, 'history'])->name('aspirasi.history');
-        Route::get('/aspirasi/{id}', [SiswaAspirasiController::class, 'detail'])->name('aspirasi.detail');
+        Route::prefix('aspirasi')->group(function () {
+            Route::get('/create', [SiswaAspirasiController::class, 'create'])->name('aspirasi.create');
+            Route::post('/', [SiswaAspirasiController::class, 'store'])->name('aspirasi.store');
+            Route::get('/status', [SiswaAspirasiController::class, 'status'])->name('aspirasi.status');
+            Route::get('/history', [SiswaAspirasiController::class, 'history'])->name('aspirasi.history');
+            Route::get('/{id}', [SiswaAspirasiController::class, 'detail'])->name('aspirasi.detail');
+        });
     });
