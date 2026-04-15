@@ -1,133 +1,273 @@
-@extends('layouts.admin')
+@extends('layouts.siswa')
 
 @section('title', 'Riwayat Aspirasi')
 
 @section('content')
-<div class="row">
-    <div class="col-xl-12">
-        <div class="page-header">
-            <h2 class="pageheader-title">Riwayat Aspirasi</h2>
-            <p class="pageheader-text">Aspirasi yang sudah selesai ditangani.</p>
-        </div>
+
+<style>
+    /* ===== HEADER ===== */
+    .page-header-custom {
+        background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
+        border-radius: 12px;
+        padding: 24px 28px;
+        margin-bottom: 24px;
+    }
+
+    .page-header-custom h4 {
+        color: #fff;
+        margin: 0;
+    }
+
+    .page-header-custom p {
+        color: rgba(255, 255, 255, 0.7);
+        margin: 0;
+        font-size: 13px;
+    }
+
+    /* ===== CARD ===== */
+    .card-custom {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    /* ===== TABLE ===== */
+    .table thead th {
+        font-size: 12px;
+        color: #6c757d;
+        background: #f8fafc;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .table tbody td {
+        font-size: 13px;
+        vertical-align: middle;
+    }
+
+    .table tbody tr:hover {
+        background: #f9fafb;
+    }
+
+    /* ===== BUTTON ===== */
+    .btn-action {
+        font-size: 12px;
+        border-radius: 6px;
+        padding: 5px 10px;
+    }
+
+    .btn-detail {
+        background: #eff6ff;
+        color: #1d4ed8;
+        border: none;
+    }
+
+    .btn-history {
+        background: #f1f5f9;
+        color: #334155;
+        border: none;
+    }
+
+    .btn-detail:hover {
+        background: #dbeafe;
+    }
+
+    .btn-history:hover {
+        background: #e2e8f0;
+    }
+
+    /* ===== BADGE ===== */
+    .badge-status {
+        padding: 6px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+    }
+
+    /* ===== TIMELINE ===== */
+    .timeline {
+        position: relative;
+        padding-left: 25px;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 8px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: #e5e7eb;
+    }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    .timeline-dot {
+        position: absolute;
+        left: -2px;
+        top: 5px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+    }
+
+    .success {
+        background: #22c55e;
+    }
+
+    .warning {
+        background: #facc15;
+    }
+
+    .danger {
+        background: #ef4444;
+    }
+
+    .timeline-content {
+        margin-left: 20px;
+    }
+</style>
+
+<div class="container-fluid">
+
+    {{-- HEADER --}}
+    <div class="page-header-custom">
+        <h4>Riwayat Aspirasi</h4>
+        <p>Daftar aspirasi yang telah selesai atau ditolak</p>
     </div>
-</div>
 
-<div class="row">
-    <div class="col-12">
+    <div class="card card-custom p-3">
 
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">History Aspirasi</h5>
-                <small class="text-muted">Status: Selesai</small>
-            </div>
+        <div class="table-responsive">
+            <table class="table">
 
-            <div class="card-body">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>ID</th>
+                        <th>Kategori</th>
+                        <th>Ruangan</th>
+                        <th>Keterangan</th>
+                        <th>Tanggal</th>
+                        <th>Status</th>
+                        <th class="text-center">Riwayat</th>
+                        <th class="text-center">Aksi</th>
+                    </tr>
+                </thead>
 
-                {{-- SUCCESS --}}
-                @if(session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
-                </div>
-                @endif
+                <tbody>
+                    @forelse($aspirasi as $index => $item)
+                    <tr>
 
-                {{-- DESKTOP TABLE --}}
-                <div class="table-responsive d-none d-md-block">
-                    <table class="table table-bordered table-hover">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Tanggal Selesai</th>
-                                <th>Kategori</th>
-                                <th>Lokasi</th>
-                                <th>Status</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($aspirasi as $index => $item)
-                            <tr>
-                                <td>{{ $index + $aspirasi->firstItem() }}</td>
-                                <td>{{ $item->updated_at->format('d/m/Y H:i') }}</td>
-                                <td>{{ $item->kategori->nama_kategori ?? '-' }}</td>
-                                <td>{{ \Illuminate\Support\Str::limit($item->lokasi, 40) }}</td>
+                        <td>{{ $index + $aspirasi->firstItem() }}</td>
 
-                                <td>
-                                    <span class="badge badge-success">Selesai</span>
-                                </td>
+                        <td><b>#{{ $item->id_aspirasi }}</b></td>
 
-                                <td>
-                                    <a href="{{ route('siswa.aspirasi.detail', $item->id_aspirasi) }}"
-                                        class="btn btn-info btn-sm">
-                                        <i class="fa fa-eye"></i> Detail
-                                    </a>
-                                </td>
-                            </tr>
+                        <td>{{ $item->kategori->nama_kategori ?? '-' }}</td>
 
-                            @empty
-                            <tr>
-                                <td colspan="6" class="text-center">
-                                    <div class="py-4">
-                                        <i class="fa fa-history" style="font-size:40px;color:#ccc;"></i>
-                                        <p class="mt-2 text-muted">Belum ada history aspirasi</p>
+                        <td>{{ $item->ruangan->nama_ruangan ?? $item->lokasi }}</td>
 
-                                        <a href="{{ route('siswa.aspirasi.create') }}"
-                                            class="btn btn-primary btn-sm">
-                                            Buat Aspirasi
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+                        <td style="max-width:200px;">
+                            {{ \Illuminate\Support\Str::limit ($item->keterangan, 50) }}
+                        </td>
 
-                {{-- MOBILE VIEW --}}
-                <div class="d-md-none">
-                    @forelse($aspirasi as $item)
-                    <div class="card mb-3">
-                        <div class="card-body">
+                        <td>{{ $item->updated_at->format ('d M Y') }}</td>
 
-                            <div class="d-flex justify-content-between mb-2">
-                                <small class="text-muted">
-                                    Selesai: {{ $item->updated_at->format('d/m/Y H:i') }}
-                                </small>
+                        <td>
+                            <span class="badge-status 
+                {{ strtolower($item->status) == 'selesai' ? 'bg-success' : 'bg-danger' }}">
+                                {{ ucfirst($item->status) }}
+                            </span>
+                        </td>
 
-                                <span class="badge badge-success">Selesai</span>
-                            </div>
+                        <td class="text-center">
+                            <button class="btn btn-action btn-history"
+                                data-bs-toggle="modal"
+                                data-bs-target="#historyModal{{ $item->id_aspirasi }}">
+                                Riwayat
+                            </button>
+                        </td>
 
-                            <p><strong>Kategori:</strong> {{ $item->kategori->nama_kategori ?? '-' }}</p>
-                            <p><strong>Lokasi:</strong> {{ $item->lokasi }}</p>
-
+                        <td class="text-center">
                             <a href="{{ route('siswa.aspirasi.detail', $item->id_aspirasi) }}"
-                                class="btn btn-info btn-sm btn-block">
-                                Lihat Detail
+                                class="btn btn-action btn-detail">
+                                Detail
                             </a>
+                        </td>
 
+                    </tr>
+
+                    {{-- MODAL --}}
+                    <div class="modal fade" id="historyModal{{ $item->id_aspirasi }}">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+
+                                <div class="modal-header bg-primary text-white">
+                                    <h5 class="modal-title">
+                                        Riwayat Status #{{ $item->id_aspirasi }}
+                                    </h5>
+                                    <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                </div>
+
+                                <div class="modal-body">
+
+                                    <div class="timeline">
+                                        @forelse($item->historyStatus as $history)
+                                        <div class="timeline-item">
+
+                                            <div class="timeline-dot 
+                                {{ strtolower($history->status_baru) == 'selesai' ? 'success' : (strtolower($history->status_baru) == 'proses' ? 'warning' : 'danger') }}">
+                                            </div>
+
+                                            <div class="timeline-content">
+                                                <strong>
+                                                    {{ ucfirst($history->status_lama) }} →
+                                                    {{ ucfirst($history->status_baru) }}
+                                                </strong><br>
+
+                                                <small class="text-muted">
+                                                    {{ $history->created_at->format('d M Y H:i') }}
+                                                </small>
+                                            </div>
+
+                                        </div>
+                                        @empty
+                                        <p class="text-muted">Belum ada riwayat</p>
+                                        @endforelse
+                                    </div>
+
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button class="btn btn-secondary" data-bs-dismiss="modal">
+                                        Tutup
+                                    </button>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
 
                     @empty
-                    <div class="text-center py-4">
-                        <i class="fa fa-history" style="font-size:40px;color:#ccc;"></i>
-                        <p class="mt-2 text-muted">Belum ada history aspirasi</p>
-
-                        <a href="{{ route('siswa.aspirasi.create') }}"
-                            class="btn btn-primary">
-                            Buat Aspirasi
-                        </a>
-                    </div>
+                    <tr>
+                        <td colspan="9" class="text-center text-muted py-4">
+                            Belum ada riwayat aspirasi
+                        </td>
+                    </tr>
                     @endforelse
-                </div>
+                </tbody>
 
-                {{-- PAGINATION --}}
-                <div class="d-flex justify-content-center mt-3">
-                    {{ $aspirasi->links() }}
-                </div>
+            </table>
+        </div>
 
-            </div>
+        {{-- PAGINATION --}}
+        <div class="mt-3 d-flex justify-content-center">
+            {{ $aspirasi->links() }}
         </div>
 
     </div>
+
 </div>
+
 @endsection

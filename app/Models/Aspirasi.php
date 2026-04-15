@@ -15,6 +15,7 @@ class Aspirasi extends Model
     protected $fillable = [
         'user_id',
         'id_kategori',
+        'id_ruangan', // 🔥 INI YANG KURANG
         'lokasi',
         'keterangan',
         'foto',
@@ -26,6 +27,7 @@ class Aspirasi extends Model
         'updated_at' => 'datetime',
     ];
 
+    // RELASI
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -33,16 +35,21 @@ class Aspirasi extends Model
 
     public function kategori()
     {
-        return $this->belongsTo(Kategori::class, 'id_kategori');
+        return $this->belongsTo(Kategori::class, 'id_kategori', 'id_kategori');
+    }
+
+    public function ruangan()
+    {
+        return $this->belongsTo(Ruangan::class, 'id_ruangan', 'id_ruangan');
     }
 
     public function progres()
     {
-        return $this->hasMany(Progres::class, 'id_aspirasi');
+        return $this->hasMany(Progres::class, 'id_aspirasi', 'id_aspirasi');
     }
 
     public function historyStatus()
     {
-        return $this->hasMany(HistoryStatus::class, 'id_aspirasi');
+        return $this->hasMany(HistoryStatus::class, 'id_aspirasi', 'id_aspirasi');
     }
 }

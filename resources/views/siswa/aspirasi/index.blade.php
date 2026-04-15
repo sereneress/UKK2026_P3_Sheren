@@ -1,4 +1,4 @@
-@extends('layouts.guru')
+@extends('layouts.siswa')
 
 @section('title', 'Data Aspirasi')
 
@@ -119,14 +119,13 @@
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
-
                 <tbody>
                     @forelse($aspirasi as $index => $item)
                     <tr>
 
-                        <td>{{ $index + $aspirasi->firstItem() }}</td>
+                        <td>{{ $aspirasi->firstItem() + $index }}</td>
 
-                        <td>{{ $item->created_at->format('d M Y') }}</td>
+                        <td>{{ $item->updated_at->format('d M Y') }}</td>
 
                         <td>{{ $item->kategori->nama_kategori ?? '-' }}</td>
 
@@ -142,30 +141,24 @@
                         </td>
 
                         <td class="text-center">
-
-                            <a href="{{ route('guru.aspirasi.detail', $item->id_aspirasi) }}"
+                            <a href="{{ route('siswa.aspirasi.detail', $item) }}"
                                 class="btn btn-action btn-detail">
                                 Detail
                             </a>
 
-                            <form action="{{ route('guru.aspirasi.destroy',$item->id_aspirasi) }}"
-                                method="POST" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-
-                                <button class="btn btn-action btn-delete">
-                                    Hapus
-                                </button>
-                            </form>
-
+                            <button class="btn btn-action btn-delete">
+                                Hapus
+                            </button>
                         </td>
+
+
 
                     </tr>
 
                     @empty
                     <tr>
-                        <td colspan="7" class="text-center text-muted py-4">
-                            Belum ada data aspirasi
+                        <td colspan="9" class="text-center text-muted py-4">
+                            Belum ada riwayat aspirasi
                         </td>
                     </tr>
                     @endforelse

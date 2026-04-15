@@ -1,4 +1,4 @@
-@extends('layouts.siswa')
+@extends('layouts.guru')
 
 @section('title', 'Buat Aspirasi')
 
@@ -118,7 +118,7 @@
 
             <div class="card card-form p-4">
 
-                <form method="POST" action="{{ route('siswa.aspirasi.store') }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('guru.aspirasi.store') }}" enctype="multipart/form-data">
                     @csrf
 
                     <div class="row">

@@ -35,7 +35,7 @@ Route::post('/register', [LoginController::class, 'register'])->name('register')
 
 /*
 |--------------------------------------------------------------------------
-| DASHBOARD REDIRECT
+| DASHBOARD REDIRECT    
 |--------------------------------------------------------------------------
 */
 Route::get('/dashboard', function () {
@@ -146,13 +146,13 @@ Route::middleware(['auth', 'role:guru'])
         Route::get('/dashboard', [GuruDashboardController::class, 'index'])->name('dashboard');
 
         Route::prefix('aspirasi')->group(function () {
+            Route::get('/create', [GuruAspirasiController::class, 'create'])->name('aspirasi.create');
             Route::get('/', [GuruAspirasiController::class, 'index'])->name('aspirasi.index');
+            Route::get('/history', [GuruAspirasiController::class, 'history'])->name('aspirasi.history');
             Route::get('/{id}', [GuruAspirasiController::class, 'detail'])->name('aspirasi.detail');
-            Route::post('/{id}/feedback', [GuruAspirasiController::class, 'storeFeedback'])->name('aspirasi.feedback');
-            Route::post('/{id}/progres', [GuruAspirasiController::class, 'storeProgres'])->name('aspirasi.progres');
+            Route::post('/aspirasi', [GuruAspirasiController::class, 'store'])->name('aspirasi.store');
             Route::delete('/{id}', [GuruAspirasiController::class, 'destroy'])->name('aspirasi.destroy');
         });
-
         Route::get('/history', [GuruAspirasiController::class, 'history'])->name('history');
     });
 
@@ -176,7 +176,6 @@ Route::middleware(['auth', 'role:petugas'])
             Route::post('/{id}/progres', [PetugasAspirasiController::class, 'storeProgres'])->name('aspirasi.progres');
             Route::delete('/{id}', [PetugasAspirasiController::class, 'destroy'])->name('aspirasi.destroy');
         });
-
         Route::get('/history', [PetugasAspirasiController::class, 'history'])->name('history');
     });
 
@@ -195,9 +194,11 @@ Route::middleware(['auth', 'role:siswa'])
 
         Route::prefix('aspirasi')->group(function () {
             Route::get('/create', [SiswaAspirasiController::class, 'create'])->name('aspirasi.create');
-            Route::post('/', [SiswaAspirasiController::class, 'store'])->name('aspirasi.store');
-            Route::get('/status', [SiswaAspirasiController::class, 'status'])->name('aspirasi.status');
+            Route::get('/', [SiswaAspirasiController::class, 'index'])->name('aspirasi.index');
             Route::get('/history', [SiswaAspirasiController::class, 'history'])->name('aspirasi.history');
             Route::get('/{id}', [SiswaAspirasiController::class, 'detail'])->name('aspirasi.detail');
+            Route::post('/aspirasi', [SiswaAspirasiController::class, 'store'])->name('aspirasi.store');
+            Route::delete('/{id}', [SiswaAspirasiController::class, 'destroy'])->name('aspirasi.destroy');
         });
+        Route::get('/history', [SiswaAspirasiController::class, 'history'])->name('history');
     });
