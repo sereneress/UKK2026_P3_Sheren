@@ -89,4 +89,8 @@ class Guru extends Model
     {
         return $this->belongsTo(Ruangan::class, 'ruangan_id');
     }
+
+    protected $casts = [
+    'tanggal_lahir' => 'date',
+];
 }

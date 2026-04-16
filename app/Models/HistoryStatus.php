@@ -34,4 +34,17 @@ class HistoryStatus extends Model
     {
         return $this->belongsTo(User::class, 'diubah_oleh');
     }
+
+    public function pengubah()
+    {
+        return $this->belongsTo(User::class, 'pengubah_id');
+    }
+
+    public function getNamaPengubahAttribute()
+    {
+        return $this->pengubah?->petugas?->nama
+            ?? $this->pengubah?->guru?->nama
+            ?? $this->pengubah?->email
+            ?? '-';
+    }
 }

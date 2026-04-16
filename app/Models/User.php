@@ -69,4 +69,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(HistoryStatus::class, 'diubah_oleh');
     }
+    
+    public function getNamaLengkapAttribute()
+    {
+        return $this->petugas?->nama
+            ?? $this->guru?->nama
+            ?? $this->email;
+    }
 }

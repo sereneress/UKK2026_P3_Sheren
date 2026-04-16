@@ -169,15 +169,26 @@ Route::middleware(['auth', 'role:petugas'])
 
         Route::get('/dashboard', [PetugasDashboardController::class, 'index'])->name('dashboard');
 
-        Route::prefix('aspirasi')->group(function () {
-            Route::get('/', [PetugasAspirasiController::class, 'index'])->name('aspirasi.index');
-            Route::get('/{id}', [PetugasAspirasiController::class, 'detail'])->name('aspirasi.detail');
-            Route::post('/{id}/feedback', [PetugasAspirasiController::class, 'storeFeedback'])->name('aspirasi.feedback');
-            Route::post('/{id}/progres', [PetugasAspirasiController::class, 'storeProgres'])->name('aspirasi.progres');
-            Route::delete('/{id}', [PetugasAspirasiController::class, 'destroy'])->name('aspirasi.destroy');
-        });
-        Route::get('/history', [PetugasAspirasiController::class, 'history'])->name('history');
+        Route::get('/aspirasi', [PetugasDashboardController::class, 'aspirasiIndex'])->name('aspirasi.index');
+        Route::get('/aspirasi/{id}', [PetugasDashboardController::class, 'aspirasiDetail'])->name('aspirasi.detail');
+
+        Route::post('/aspirasi/{id}/status', [PetugasDashboardController::class, 'updateStatus'])->name('aspirasi.status');
+        Route::post('/aspirasi/{id}/feedback', [PetugasDashboardController::class, 'storeFeedback'])->name('aspirasi.feedback');
+        Route::post('/aspirasi/{id}/progres', [PetugasDashboardController::class, 'storeProgres'])->name('aspirasi.progres');
+
+        Route::get('/history', [PetugasDashboardController::class, 'history'])->name('history');
+        Route::get('/profile', [PetugasDashboardController::class, 'profile'])->name('profile');
     });
+
+/*
+|--------------------------------------------------------------------------
+| PROFILE ROUTES (for all roles)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->group(function () {
+    Route::get('/profile/my-account', [\App\Http\Controllers\ProfileController::class, 'myAccount'])->name('profile.my-account');
+    Route::get('/profile/settings', [\App\Http\Controllers\ProfileController::class, 'settings'])->name('profile.settings');
+});
 
 
 /*

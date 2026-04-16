@@ -100,7 +100,7 @@
                     <div class="mr-2">
                         <i class="fa fa-school text-primary" style="font-size: 24px;"></i>
                     </div>
-                </div>
+                </div>x`
 
                 <!-- USER INFO -->
                 <!-- FOTO / INISIAL -->
@@ -145,7 +145,7 @@
 
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('guru.aspirasi.history') }}">
-                                    <i class="fa fa-history"></i> Riwayat Aspirasi
+                                    <i class="fa fa-history"></i> Review Aspirasi Siswa
                                 </a>
                             </li>
 
