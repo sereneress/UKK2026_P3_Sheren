@@ -79,7 +79,7 @@ class AspirasiController extends Controller
             'status' => 'Menunggu'
         ]);
 
-        return redirect()->route('siswa.aspirasi.index')
+        return redirect()->route('guru.aspirasi.index')
             ->with('success', 'Aspirasi berhasil dikirim');
     }
 

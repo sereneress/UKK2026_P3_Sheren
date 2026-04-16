@@ -162,7 +162,7 @@
 
                         <td>{{ $index + $histories->firstItem() }}</td>
 
-                        <td><b>#{{ $item->id_aspirasi }}</b></td>
+                        <td><b>#{{ $aspirasi->id_aspirasi }}</b></td>
 
                         <td>{{ $aspirasi->kategori->nama_kategori ?? '-' }}</td>
 
